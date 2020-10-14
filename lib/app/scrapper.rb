@@ -1,16 +1,15 @@
 
 require 'pp'
 require "pry"
-
-
-#---------------- fetches email adresses
+require 'json'
 
 
 class Scrap_Town
+    attr_accessor :city_array
+    
+    def initialize
 
-    def get_cities_url
-
-        a = []
+        @city_array = []
 
         # RECUP url ville val d'oise
         page = Nokogiri::HTML(URI.open("http://annuaire-des-mairies.com/val-d-oise.html"))   
@@ -34,14 +33,26 @@ class Scrap_Town
             city_email = page.xpath('//html/body/div[1]/main/section[2]/div/table/tbody/tr[4]/td[2]').text
 
             my_hash.store(name.text, city_email)
-            a << my_hash
+            @city_array << my_hash
         end
-        
-        return a
     end
 
+    def save_as_JSON
+        File.open("db/email.json", "w+") do |f|
+            f.write(JSON.pretty_generate(@city_array))
+          end
+    end
+
+
+    #---- 
+
+
+# tempHash = {
+#     "key_a" => "val_a",
+#     "key_b" => "val_b"
+# }
+
+#https://stackoverflow.com/questions/5507512/how-to-write-to-a-json-file-in-the-correct-format/5507535#5507535
+
+
 end
-
-
-
-#------------------fetches email adresses
